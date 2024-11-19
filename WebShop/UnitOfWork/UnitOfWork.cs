@@ -26,5 +26,10 @@ namespace WebShop.UnitOfWork
         {
             _productSubject.Notify(product);
         }
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
