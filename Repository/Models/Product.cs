@@ -1,9 +1,14 @@
+using Repository.Models;
+
 namespace Repository
 {
-    // Produktmodellen representerar en produkt i webbshoppen
     public class Product
     {
-        public int Id { get; set; } // Unikt ID för produkten
-        public string Name { get; set; } // Namn på produkten
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
+        public ICollection<OrderItem> OrderItems { get; set; }
     }
 }

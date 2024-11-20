@@ -3,23 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Repository.Data;
 
 namespace Repository.Repositories
 {
     public class Repository<T> : IRepository<T> where T : class
     {
         // Consume dbContext
-        // private readonly DbContext _dbContext;
+        private readonly DbContext _dbContext;
         // Use dbSet
-        // private readonly DbSet<T> _dbSet;
+        private readonly DbSet<T> _dbSet;
 
-        public Repository(/* dbContext */)
+        public Repository(MyDbContext context, DbSet<T> dbSet)
         {
-            // _dbContext = dbContext; */
+            _dbContext = context;
+            _dbSet = context.Set<T>();
         }
         public Task Add(T entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Add(entity);
+            return _dbContext.SaveChangesAsync();
         }
 
         public Task Delete(T entity)

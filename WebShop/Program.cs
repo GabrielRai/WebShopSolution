@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using Repository.Data;
 using WebShop.Notifications;
 using WebShop.Repositories;
 using WebShop.UnitOfWork;
@@ -13,6 +15,9 @@ builder.Services.AddTransient<INotificationObserver, EmailNotification>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<MyDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
