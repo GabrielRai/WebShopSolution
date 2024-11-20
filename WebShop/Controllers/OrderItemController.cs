@@ -4,6 +4,8 @@ using WebShop.UnitOfWork;
 
 namespace WebShop.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class OrderItemController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -46,7 +48,7 @@ namespace WebShop.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult GetOrderItemById(int id)
         {
             try

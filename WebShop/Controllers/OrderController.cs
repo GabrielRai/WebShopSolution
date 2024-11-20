@@ -51,7 +51,7 @@ namespace WebShop.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult GetOrderById(int id)
         {
             try

@@ -1,4 +1,5 @@
 ﻿using Repository.Repositories;
+using Repository.Repositories.Categories;
 using Repository.Repositories.OrderItems;
 using Repository.Repositories.Orders;
 using Repository.Repositories.Products;
@@ -12,7 +13,7 @@ namespace WebShop.UnitOfWork
         IProductRepository Products { get; }
         IOrderRepository Orders { get; }
         IOrderItemRepository OrderItems { get; }
-
+        ICategoryRepository Categories { get; }
         int Complete();
     }
 }
