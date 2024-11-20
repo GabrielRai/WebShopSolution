@@ -1,4 +1,5 @@
 ﻿using Repository.Repositories;
+using Repository.Repositories.Orders;
 using Repository.Repositories.Products;
 
 
@@ -8,6 +9,8 @@ namespace WebShop.UnitOfWork
     public interface IUnitOfWork : IDisposable
     {
         IProductRepository Products { get; }
+        IOrderRepository Orders { get; }
+
         int Complete();
     }
 }
