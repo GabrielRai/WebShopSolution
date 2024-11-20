@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Repository.Data;
 
 namespace Repository.Repositories
@@ -11,7 +6,8 @@ namespace Repository.Repositories
     public class Repository<T> : IRepository<T> where T : class
     {
         // Consume dbContext
-        private readonly DbContext _dbContext;
+        private readonly MyDbContext _dbContext;
+
         // Use dbSet
         private readonly DbSet<T> _dbSet;
 
@@ -20,30 +16,31 @@ namespace Repository.Repositories
             _dbContext = context;
             _dbSet = context.Set<T>();
         }
-        public Task Add(T entity)
+
+        public void Add(T entity)
         {
             _dbSet.Add(entity);
-            return _dbContext.SaveChangesAsync();
         }
 
-        public Task Delete(T entity)
+        public void Delete(T entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Remove(entity);
         }
 
         public IEnumerable<T> GetAll()
         {
-            throw new NotImplementedException();
+            return _dbSet.ToList();
         }
 
         public T GetById(int id)
         {
-            throw new NotImplementedException();
+           return _dbSet.Find(id);
         }
 
-        public Task Update(T entity)
+        public void Update(T entity)
         {
-            throw new NotImplementedException();
+            _dbSet.Update(entity);
+
         }
     }
 }

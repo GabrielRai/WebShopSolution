@@ -1,6 +1,6 @@
 ﻿using Repository.Models;
 
-namespace Repository.Repositories
+namespace Repository.Repositories.Orders
 {
     // Gränssnitt för produktrepositoryt enligt Repository Pattern
     public interface IOrderRepository : IRepository<Order>

@@ -10,9 +10,9 @@ namespace Repository.Repositories
     {
         IEnumerable<T> GetAll();
         T GetById(int id);
-        Task Add(T entity);
-        Task Update(T entity);
-        Task Delete(T entity);
+        void Add(T entity);
+        void Update(T entity);
+        void Delete(T entity);
 
     }
 }

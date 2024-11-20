@@ -12,8 +12,8 @@ using Repository.Data;
 namespace Repository.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20241120133232_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241120154133_Updated")]
+    partial class Updated
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -122,7 +122,7 @@ namespace Repository.Migrations
                         .IsRequired();
 
                     b.HasOne("Repository.Product", "Product")
-                        .WithMany("OrderItems")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -134,13 +134,11 @@ namespace Repository.Migrations
 
             modelBuilder.Entity("Repository.Product", b =>
                 {
-                    b.HasOne("Repository.Models.Category", "Category")
+                    b.HasOne("Repository.Models.Category", null)
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
                 });
 
             modelBuilder.Entity("Repository.Models.Category", b =>
@@ -149,11 +147,6 @@ namespace Repository.Migrations
                 });
 
             modelBuilder.Entity("Repository.Models.Order", b =>
-                {
-                    b.Navigation("OrderItems");
-                });
-
-            modelBuilder.Entity("Repository.Product", b =>
                 {
                     b.Navigation("OrderItems");
                 });

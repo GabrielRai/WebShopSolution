@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Repository.Repositories.Products;
 using WebShop;
 using WebShop.Controllers;
-using WebShop.Repositories;
 
 public class ProductControllerTests
 {

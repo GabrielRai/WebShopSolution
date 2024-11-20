@@ -1,6 +1,6 @@
 ﻿using Repository.Models;
 
-namespace Repository.Repositories;
+namespace Repository.Repositories.OrderItems;
 
 public interface IOrderItemRepository : IRepository<OrderItem>
 {
