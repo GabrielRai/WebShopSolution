@@ -33,7 +33,7 @@ namespace Repository.Data
 
             modelBuilder.Entity<Product>()
                 .HasOne<Category>()
-                .WithMany(c => c.Products)
+                .WithMany()
                 .HasForeignKey(p => p.CategoryId);
 
             base.OnModelCreating(modelBuilder);
