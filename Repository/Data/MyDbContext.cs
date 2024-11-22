@@ -18,6 +18,7 @@ namespace Repository.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<Customer> Customer { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,6 +36,11 @@ namespace Repository.Data
                 .HasOne<Category>()
                 .WithMany()
                 .HasForeignKey(p => p.CategoryId);
+
+            modelBuilder.Entity<Customer>()
+                .HasMany(c => c.Orders)
+                .WithOne(o => o.Customer)
+                .HasForeignKey(o => o.CustomerId);
 
             base.OnModelCreating(modelBuilder);
         }
