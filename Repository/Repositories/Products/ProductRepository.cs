@@ -5,19 +5,24 @@ namespace Repository.Repositories.Products
 {
     public class ProductRepository : Repository<Product>, IProductRepository
     {
-        public ProductRepository(MyDbContext context, DbSet<Product> dbSet) : base(context, dbSet) { }
+        private readonly MyDbContext _context;
+        private readonly DbSet<Product> _dbSet;
+        public ProductRepository(MyDbContext context, DbSet<Product> dbSet) : base(context, dbSet)
+        {
+            _context = context;
+            _dbSet = context.Set<Product>();
+        }
         public bool UpdateProductStock(Product product, int quantity)
         {
-            throw new NotImplementedException();
+            try
+            { 
+                _context.Update(product.Stock = quantity);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
-
-        public void AddProduct(Product product)
-        {
-            if (product == null)
-                throw new ArgumentNullException(nameof(product));
-
-            Add(product);
-        }
-
     }
 }

@@ -17,12 +17,12 @@ namespace Repository.Repositories
             _dbSet = context.Set<T>();
         }
 
-        public void Add(T entity)
+        public async Task Add(T entity)
         {
             _dbSet.Add(entity);
         }
 
-        public void Delete(T entity)
+        public async Task Delete(T entity)
         {
             _dbSet.Remove(entity);
         }
@@ -37,7 +37,7 @@ namespace Repository.Repositories
            return _dbSet.Find(id);
         }
 
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
             _dbSet.Update(entity);
 
