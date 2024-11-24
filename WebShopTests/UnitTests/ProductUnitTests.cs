@@ -3,11 +3,11 @@ using Moq;
 using Repository;
 using Repository.Repositories.Products;
 
-public class ProductRepositoryTests
+public class ProductUnitTests
 {
     private readonly Mock<IProductRepository> _mockProductRepository;
 
-    public ProductRepositoryTests()
+    public ProductUnitTests()
     {
         _mockProductRepository = new Mock<IProductRepository>();
     }
