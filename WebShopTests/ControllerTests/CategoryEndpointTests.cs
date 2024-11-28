@@ -91,5 +91,92 @@ namespace WebShopTests.ControllerTests
             Assert.Equal(400, requestResult.StatusCode);
             A.CallTo(() => fakeUoW.Categories.Add(A<Category>._)).MustNotHaveHappened();
         }
+
+        [Fact]
+        public void UpdateCategory_ReturnsOk()
+        {
+            // Arrange
+            var fakeUoW = A.Fake<IUnitOfWork>();
+            var category = new Category
+            {
+                Id = 1,
+                Name = "Category1"
+            };
+
+            // Act
+            var controller = new CategoryController(fakeUoW);
+            var result = controller.UpdateCategory(category);
+
+            // Assert
+            var requestResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, requestResult.StatusCode);
+            A.CallTo(() => fakeUoW.Categories.GetById(A<int>._)).MustHaveHappened();
+        }
+
+        [Fact]
+        public void UpdateCategory_ReturnsNotFound()
+        {
+            // Arrange
+            var fakeUoW = A.Fake<IUnitOfWork>();
+            var category = new Category
+            {
+                Id = 1,
+                Name = "Category1"
+            };
+            var controller = new CategoryController(fakeUoW);
+            A.CallTo(() => fakeUoW.Categories.GetById(category.Id)).Returns(null);
+
+            // Act
+            var result = controller.UpdateCategory(category);
+
+            // Assert
+            var requestResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal(404, requestResult.StatusCode);
+            A.CallTo(() => fakeUoW.Categories.Update(A<Category>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public void DeleteCategory_ReturnsNotFound()
+        {
+            // Arrange
+            var fakeUoW = A.Fake<IUnitOfWork>();
+            var category = new Category
+            {
+                Id = 1,
+                Name = "Category1"
+            };
+            var controller = new CategoryController(fakeUoW);
+            A.CallTo(() => fakeUoW.Categories.GetById(category.Id)).Returns(null);
+
+            // Act
+            var result = controller.DeleteCategory(category.Id);
+
+            // Assert
+            var requestResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal(404, requestResult.StatusCode);
+            A.CallTo(() => fakeUoW.Categories.Delete(A<Category>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public void DeleteCategory_ReturnsOk()
+        {
+            // Arrange
+            var fakeUoW = A.Fake<IUnitOfWork>();
+            var category = new Category
+            {
+                Id = 1,
+                Name = "Category1"
+            };
+            var controller = new CategoryController(fakeUoW);
+            A.CallTo(() => fakeUoW.Categories.GetById(1)).Returns(category);
+
+            // Act
+            var result = controller.DeleteCategory(category.Id);
+
+            // Assert
+            var requestResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, requestResult.StatusCode);
+            A.CallTo(() => fakeUoW.Categories.Delete(A<Category>._)).MustHaveHappened();
+        }
     }
 }
