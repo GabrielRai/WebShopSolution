@@ -18,6 +18,10 @@ namespace WebShop.Controllers
         [HttpPost]
         public IActionResult AddProduct([FromBody] Product product)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
             _unitOfWork.Products.Add(product);
             _unitOfWork.Complete();
 

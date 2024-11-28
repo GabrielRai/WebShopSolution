@@ -115,6 +115,26 @@ namespace WebShopTests.ControllerTests
            // Assert
            var requestResult = Assert.IsType<OkObjectResult>(result);
            Assert.Equal(200, requestResult.StatusCode);
+           A.CallTo(() => FakeUoW.Products.Add(A<Product>._)).MustHaveHappened();
+        }
+
+        [Fact]
+        public async Task AddProduct_ReturnsBadRequest()
+        {
+            // Arrange
+           var FakeUoW = A.Fake<IUnitOfWork>();
+           var product = new Product();
+
+           var controller = new ProductController(FakeUoW);
+           controller.ModelState.AddModelError("Name", "Required");
+
+            // Act
+            var result =  controller.AddProduct(product);
+
+           // Assert
+           var requestResult = Assert.IsType<BadRequestObjectResult>(result);
+           Assert.Equal(400, requestResult.StatusCode);
+           A.CallTo(() => FakeUoW.Products.Add(A<Product>._)).MustNotHaveHappened();
         }
 
         [Fact]
@@ -140,6 +160,7 @@ namespace WebShopTests.ControllerTests
             // Assert
             var requestResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, requestResult.StatusCode);
+            A.CallTo(() => FakeUoW.Products.Update(A<Product>._)).MustHaveHappened();
         }
 
         [Fact]
@@ -165,6 +186,7 @@ namespace WebShopTests.ControllerTests
             // Assert
             var requestResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal(404, requestResult.StatusCode);
+            A.CallTo(() => FakeUoW.Products.Update(A<Product>._)).MustNotHaveHappened();
         }
 
         [Fact]
@@ -182,6 +204,7 @@ namespace WebShopTests.ControllerTests
             // Assert
             var requestResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal(200, requestResult.StatusCode);
+            A.CallTo(() => FakeUoW.Products.Delete(A<Product>._)).MustHaveHappened();
         }
 
         [Fact]
@@ -198,6 +221,7 @@ namespace WebShopTests.ControllerTests
             // Assert
             var requestResult = Assert.IsType<NotFoundResult>(result);
             Assert.Equal(404, requestResult.StatusCode);
+            A.CallTo(() => FakeUoW.Products.Delete(A<Product>._)).MustNotHaveHappened();
         }
     }
 }
