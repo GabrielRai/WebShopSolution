@@ -32,7 +32,7 @@ public class ProductUnitTests
     }
 
     [Fact]
-    public void GetProducts_ReturnsNotFoundResult()
+    public void GetProducts_ReturnsNull()
     {
         // Arrange
         _mockProductRepository.Setup(repo => repo.GetAll()).Returns(() => null);
@@ -60,7 +60,7 @@ public class ProductUnitTests
     }
 
     [Fact]
-    public void GetProductById_ReturnsNotFoundResult()
+    public void GetProductById_ReturnsNull()
     {
         // Arrange
         var product = new Product { Id = 1, Name = "Product 1" };
