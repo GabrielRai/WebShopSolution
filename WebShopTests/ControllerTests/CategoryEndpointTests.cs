@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FakeItEasy;
+﻿using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
-using Repository;
 using Repository.Models;
 using WebShop.Controllers;
 using WebShop.UnitOfWork;
@@ -27,7 +21,7 @@ namespace WebShopTests.ControllerTests
                 },
                 new Category
                 {
-                    Id = 2, 
+                    Id = 2,
                     Name = "Category2",
                 }
             };
@@ -44,11 +38,10 @@ namespace WebShopTests.ControllerTests
         }
 
         [Fact]
-        public void GetAllCategories_ReturnsNull()
+        public void GetAllCategories_ReturnsNotFound()
         {
             // Arrange
             var fakeUoW = A.Fake<IUnitOfWork>();
-            A.CallTo(() => fakeUoW.Categories.GetAll()).Returns(null);
 
             // Act
             var controller = new CategoryController(fakeUoW);
@@ -82,7 +75,8 @@ namespace WebShopTests.ControllerTests
         }
 
         [Fact]
-        public void AddCategory_ReturnsBadRequest() {
+        public void AddCategory_ReturnsBadRequest()
+        {
             // Arrange
             var fakeUoW = A.Fake<IUnitOfWork>();
             var category = new Category();

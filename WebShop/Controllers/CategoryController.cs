@@ -19,89 +19,74 @@ namespace WebShop.Controllers
         [HttpPost]
         public IActionResult AddCategory([FromBody] Category category)
         {
-            if (category == null)
+            if (!ModelState.IsValid)
+            {
                 return BadRequest("Category is null.");
-
-            try
-            {
-                _unitOfWork.Categories.Add(category);
-
-                // Save changes
-                _unitOfWork.Complete();
-
-                return Ok("Category added successfully.");
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+
+            _unitOfWork.Categories.Add(category);
+            _unitOfWork.Complete();
+
+            return Ok("Category added successfully.");
         }
 
         [HttpGet]
         public IActionResult GetCategories()
         {
-            try
-            {
-                var categories = _unitOfWork.Categories.GetAll();
+            var categories = _unitOfWork.Categories.GetAll();
 
-                return Ok(categories);
-            }
-            catch (Exception ex)
+            if (!categories.Any())
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Categories not found" });
             }
+            return Ok(categories);
+
         }
+
         [HttpGet("{id}")]
         public IActionResult GetCategoryById(int id)
         {
-            try
-            {
-                var category = _unitOfWork.Categories.GetById(id);
+            var category = _unitOfWork.Categories.GetById(id);
 
-                return Ok(category);
-            }
-            catch (Exception ex)
+            if (category == null)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Category not found" });
             }
+
+            return Ok(category);
         }
+
         [HttpPut]
         public IActionResult UpdateCategory([FromBody] Category category)
         {
-            if (category == null)
-                return BadRequest("Category is null.");
 
-            try
+            var existingCategory = _unitOfWork.Categories.GetById(category.Id);
+            if (existingCategory == null)
             {
-                _unitOfWork.Categories.Update(category);
-                _unitOfWork.Complete();
+                return NotFound(new { Message = $"Category with ID {category.Id} not found." });
+            }
 
-                return Ok("Category updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            _unitOfWork.Categories.Update(category);
+            _unitOfWork.Complete();
+
+            return Ok("Category updated successfully.");
+
         }
+
         [HttpDelete]
         public IActionResult DeleteCategory(int id)
         {
-            try
+            var category = _unitOfWork.Categories.GetById(id);
+
+            if (category == null)
             {
-                var category = _unitOfWork.Categories.GetById(id);
-
-                if (category == null)
-                    return NotFound();
-
-                _unitOfWork.Categories.Delete(category);
-                _unitOfWork.Complete();
-
-                return Ok("Category deleted successfully.");
+                return NotFound(new { Message = "Category not found" });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+
+            _unitOfWork.Categories.Delete(category);
+            _unitOfWork.Complete();
+
+            return Ok("Category deleted successfully.");
         }
     }
 }

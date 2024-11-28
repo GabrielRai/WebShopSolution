@@ -82,7 +82,6 @@ namespace WebShopTests.ControllerTests
         {
             // Arrange
             var FakeUoW = A.Fake<IUnitOfWork>();
-            A.CallTo(() => FakeUoW.Products.GetAll()).Returns(new List<Product>());
 
             // Act
             var controller = new ProductController(FakeUoW);

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FakeItEasy;
+﻿using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Models;
 using WebShop.Controllers;
@@ -31,7 +26,7 @@ namespace WebShopTests.ControllerTests
                 },
                 new Customer
                 {
-                    Id = 2, 
+                    Id = 2,
                     Name = "Jane",
                     Orders = new List<Order>
                     {
@@ -58,7 +53,6 @@ namespace WebShopTests.ControllerTests
         {
             // Arrange
             var fakeUoW = A.Fake<IUnitOfWork>();
-            A.CallTo(() => fakeUoW.Customers.GetAll()).Returns(new List<Customer>());
 
             // Act
             var controller = new CustomerController(fakeUoW);
@@ -70,7 +64,8 @@ namespace WebShopTests.ControllerTests
         }
 
         [Fact]
-        public void AddCustomer_ReturnOk() {
+        public void AddCustomer_ReturnOk()
+        {
             // Arrange
             var fakeUoW = A.Fake<IUnitOfWork>();
             var customer = new Customer
