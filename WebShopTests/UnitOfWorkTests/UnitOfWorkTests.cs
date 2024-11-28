@@ -1,8 +1,4 @@
-using Moq;
-using Repository;
-using WebShop.Notifications;
-
-namespace WebShop.Tests
+namespace WebShopTests.UnitOfWorkTests
 {
     public class UnitOfWorkTests
     {
