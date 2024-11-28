@@ -1,6 +1,5 @@
 ﻿
 using FakeItEasy;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Repository;
 using WebShop.Controllers;
@@ -15,126 +14,126 @@ namespace WebShopTests.ControllerTests
         {
             // Arrange
 
-           var FakeUoW = A.Fake<IUnitOfWork>();
-           var productId = new Product
-           {
-               Id = 1,
-               CategoryId = 1,
-               Name = "test",
-               Price = 10,
-               Stock = 1
-           };
+            var FakeUoW = A.Fake<IUnitOfWork>();
+            var productId = new Product
+            {
+                Id = 1,
+                CategoryId = 1,
+                Name = "test",
+                Price = 10,
+                Stock = 1
+            };
 
-           A.CallTo(() => FakeUoW.Products.GetById(1)).Returns(productId);
+            A.CallTo(() => FakeUoW.Products.GetById(1)).Returns(productId);
 
-           // Act
+            // Act
 
-           var controller = new ProductController(FakeUoW);
-           var result =  controller.GetProductById(1);
+            var controller = new ProductController(FakeUoW);
+            var result = controller.GetProductById(1);
 
-           // Assert
+            // Assert
 
-           var requestResult = Assert.IsType<OkObjectResult>(result);
-           var returnValue = Assert.IsType<Product>(requestResult.Value);
-           Assert.Equal(1, returnValue.Id);
+            var requestResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<Product>(requestResult.Value);
+            Assert.Equal(1, returnValue.Id);
         }
 
         [Fact]
         public async Task GetProductById_ReturnsNotFound()
-        { 
+        {
             // Arrange
-           var FakeUoW = A.Fake<IUnitOfWork>();
-           A.CallTo(() => FakeUoW.Products.GetById(1)).Returns(null);
+            var FakeUoW = A.Fake<IUnitOfWork>();
+            A.CallTo(() => FakeUoW.Products.GetById(1)).Returns(null);
 
-           // Act
-           var controller = new ProductController(FakeUoW);
-           var result =  controller.GetProductById(1);
+            // Act
+            var controller = new ProductController(FakeUoW);
+            var result = controller.GetProductById(1);
 
-           // Assert
-           var requestResult = Assert.IsType<NotFoundObjectResult>(result);
-           Assert.Equal(404, requestResult.StatusCode);
+            // Assert
+            var requestResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal(404, requestResult.StatusCode);
         }
 
         [Fact]
         public async Task GetProducts_ReturnsProducts()
         {
             // Arrange
-           var FakeUoW = A.Fake<IUnitOfWork>();
-           var products = new List<Product>
+            var FakeUoW = A.Fake<IUnitOfWork>();
+            var products = new List<Product>
            {
                new Product { Id = 1, CategoryId = 1, Name = "test", Price = 10, Stock = 1 },
                new Product { Id = 2, CategoryId = 1, Name = "test", Price = 10, Stock = 1 }
            };
 
-           A.CallTo(() => FakeUoW.Products.GetAll()).Returns(products);
+            A.CallTo(() => FakeUoW.Products.GetAll()).Returns(products);
 
-           // Act
-           var controller = new ProductController(FakeUoW);
-           var result =  controller.GetProducts();
+            // Act
+            var controller = new ProductController(FakeUoW);
+            var result = controller.GetProducts();
 
-           // Assert
-           var requestResult = Assert.IsType<OkObjectResult>(result);
-           var returnValue = Assert.IsType<List<Product>>(requestResult.Value);
-           Assert.Equal(2, returnValue.Count);
+            // Assert
+            var requestResult = Assert.IsType<OkObjectResult>(result);
+            var returnValue = Assert.IsType<List<Product>>(requestResult.Value);
+            Assert.Equal(2, returnValue.Count);
         }
 
         [Fact]
         public async Task GetProducts_ReturnsNotFound()
         {
             // Arrange
-           var FakeUoW = A.Fake<IUnitOfWork>();
-           A.CallTo(() => FakeUoW.Products.GetAll()).Returns(new List<Product>());
+            var FakeUoW = A.Fake<IUnitOfWork>();
+            A.CallTo(() => FakeUoW.Products.GetAll()).Returns(new List<Product>());
 
-           // Act
-           var controller = new ProductController(FakeUoW);
-           var result =  controller.GetProducts();
+            // Act
+            var controller = new ProductController(FakeUoW);
+            var result = controller.GetProducts();
 
-           // Assert
-           var requestResult = Assert.IsType<NotFoundObjectResult>(result);
-           Assert.Equal(404, requestResult.StatusCode);
+            // Assert
+            var requestResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal(404, requestResult.StatusCode);
         }
 
         [Fact]
         public async Task AddProduct_ReturnsOk()
         {
             // Arrange
-           var FakeUoW = A.Fake<IUnitOfWork>();
-           var product = new Product
-           {
-               Id = 1,
-               CategoryId = 1,
-               Name = "test",
-               Price = 10,
-               Stock = 1
-           };
+            var FakeUoW = A.Fake<IUnitOfWork>();
+            var product = new Product
+            {
+                Id = 1,
+                CategoryId = 1,
+                Name = "test",
+                Price = 10,
+                Stock = 1
+            };
 
-           // Act
-           var controller = new ProductController(FakeUoW);
-           var result =  controller.AddProduct(product);
+            // Act
+            var controller = new ProductController(FakeUoW);
+            var result = controller.AddProduct(product);
 
-           // Assert
-           var requestResult = Assert.IsType<OkObjectResult>(result);
-           Assert.Equal(200, requestResult.StatusCode);
-           A.CallTo(() => FakeUoW.Products.Add(A<Product>._)).MustHaveHappened();
+            // Assert
+            var requestResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, requestResult.StatusCode);
+            A.CallTo(() => FakeUoW.Products.Add(A<Product>._)).MustHaveHappened();
         }
 
         [Fact]
         public async Task AddProduct_ReturnsBadRequest()
         {
             // Arrange
-           var FakeUoW = A.Fake<IUnitOfWork>();
-           var product = new Product();
+            var FakeUoW = A.Fake<IUnitOfWork>();
+            var product = new Product();
 
-           var controller = new ProductController(FakeUoW);
-           controller.ModelState.AddModelError("Name", "Required");
+            var controller = new ProductController(FakeUoW);
+            controller.ModelState.AddModelError("Name", "Required");
 
             // Act
-            var result =  controller.AddProduct(product);
+            var result = controller.AddProduct(product);
 
-           // Assert
-           var requestResult = Assert.IsType<BadRequestObjectResult>(result);
-           Assert.Equal(400, requestResult.StatusCode);
-           A.CallTo(() => FakeUoW.Products.Add(A<Product>._)).MustNotHaveHappened();
+            // Assert
+            var requestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, requestResult.StatusCode);
+            A.CallTo(() => FakeUoW.Products.Add(A<Product>._)).MustNotHaveHappened();
         }
 
         [Fact]
@@ -194,7 +193,7 @@ namespace WebShopTests.ControllerTests
         {
             // Arrange
             var FakeUoW = A.Fake<IUnitOfWork>();
-            var product = new Product {};
+            var product = new Product { };
             A.CallTo(() => FakeUoW.Products.GetById(1)).Returns(product);
 
             // Act
