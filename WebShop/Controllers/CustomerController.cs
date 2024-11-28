@@ -16,92 +16,72 @@ namespace WebShop.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddCategory([FromBody] Customer customer)
+        public IActionResult AddCustomer([FromBody] Customer customer)
         {
-            if (customer == null)
-                return BadRequest("Customer is null.");
-
-            try
+            if (!ModelState.IsValid)
             {
-                _unitOfWork.Customers.Add(customer);
-                _unitOfWork.Complete();
+                return BadRequest(ModelState);
+            }
+            _unitOfWork.Customers.Add(customer);
+            _unitOfWork.Complete();
 
-                return Ok("Customer added successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok("Customer added successfully.");
         }
 
         [HttpGet]
         public IActionResult GetCustomers()
         {
-            try
-            {
-                var customers = _unitOfWork.Customers.GetAll();
+            var customers = _unitOfWork.Customers.GetAll();
 
-                return Ok(customers);
-            }
-            catch (Exception ex)
+            if (!customers.Any())
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Customers not found" });
             }
+
+            return Ok(customers);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetCustomerById(int id)
         {
-            try
-            {
-                var customers = _unitOfWork.Customers.GetById(id);
+            var customers = _unitOfWork.Customers.GetById(id);
 
-                return Ok(customers);
-            }
-            catch (Exception ex)
+            if (customers == null)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Customer not found" });
             }
+
+            return Ok(customers);
         }
 
         [HttpPut]
-        public IActionResult UpdateCategory([FromBody] Customer customer)
+        public IActionResult UpdateCustomer([FromBody] Customer customer)
         {
-            if (customer == null)
-                return BadRequest("Customer is null.");
-
-            try
+            var existingCustomer = _unitOfWork.Customers.GetById(customer.Id);
+            if (existingCustomer == null)
             {
-                _unitOfWork.Customers.Update(customer);
-                _unitOfWork.Complete();
+                return NotFound(new { Message = $"Customer with ID {customer.Id} not found." });
+            }
+       
+            _unitOfWork.Customers.Update(customer);
+            _unitOfWork.Complete();
 
-                return Ok("Customer updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok("Customer updated successfully.");
         }
 
         [HttpDelete]
         public IActionResult DeleteCustomer(int id)
         {
-            try
+            var customer = _unitOfWork.Customers.GetById(id);
+            if (customer == null)
             {
-                var customer = _unitOfWork.Customers.GetById(id);
-
-                if (customer == null)
-                    return NotFound();
-
-                _unitOfWork.Customers.Delete(customer);
-                _unitOfWork.Complete();
-
-                return Ok("Customer deleted successfully.");
+                return NotFound(new { Message = "Customer not found" });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+
+            _unitOfWork.Customers.Delete(customer);
+            _unitOfWork.Complete();
+
+            return Ok("Customer deleted successfully.");
         }
     }
 }

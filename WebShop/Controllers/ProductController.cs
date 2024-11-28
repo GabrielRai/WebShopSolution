@@ -36,6 +36,7 @@ namespace WebShop.Controllers
             return Ok(products);
             
         }
+
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id)
         {
