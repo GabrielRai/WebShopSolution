@@ -12,8 +12,8 @@ using Repository.Data;
 namespace Repository.Migrations
 {
     [DbContext(typeof(MyDbContext))]
-    [Migration("20241122094854_UpdatedAgain3")]
-    partial class UpdatedAgain3
+    [Migration("20241124215508_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -127,6 +127,9 @@ namespace Repository.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

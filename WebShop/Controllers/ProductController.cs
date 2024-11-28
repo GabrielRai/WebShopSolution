@@ -56,16 +56,16 @@ namespace WebShop.Controllers
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id)
         {
-            try
-            {
-                var product = _unitOfWork.Products.GetById(id);
+            
+            var product = _unitOfWork.Products.GetById(id);
 
-                return Ok(product);
-            }
-            catch (Exception ex)
+            if (product == null)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Product not found" });
             }
+
+            return Ok(product);
+
         }
         [HttpPut]
         public IActionResult UpdateProduct([FromBody] Product product)

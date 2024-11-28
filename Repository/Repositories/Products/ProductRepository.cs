@@ -14,15 +14,13 @@ namespace Repository.Repositories.Products
         }
         public bool UpdateProductStock(Product product, int quantity)
         {
-            try
-            { 
-                _context.Update(product.Stock = quantity);
-                return true;
-            }
-            catch
+            if (product == null || quantity < 0)
             {
                 return false;
             }
+
+            _context.Update(product.Stock = quantity);
+            return true;
         }
     }
 }
