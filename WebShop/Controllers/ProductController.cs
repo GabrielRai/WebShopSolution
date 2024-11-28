@@ -10,48 +10,31 @@ namespace WebShop.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
-        // Constructor with UnitOfWork injected
         public ProductController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
 
-        // POST: api/Product
         [HttpPost]
         public IActionResult AddProduct([FromBody] Product product)
         {
-            if (product == null)
-                return BadRequest("Product is null.");
+            _unitOfWork.Products.Add(product);
+            _unitOfWork.Complete();
 
-            try
-            {
-                _unitOfWork.Products.Add(product);
-
-                // Save changes
-                _unitOfWork.Complete();
-
-                return Ok("Product added successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok("Product added successfully.");
         }
 
-        // GET: api/Product
         [HttpGet]
         public IActionResult GetProducts()
         {
-            try
-            {
-                var products = _unitOfWork.Products.GetAll();
+            var products = _unitOfWork.Products.GetAll();
 
-                return Ok(products);
-            }
-            catch (Exception ex)
+            if (!products.Any())
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Products not found" });
             }
+            return Ok(products);
+            
         }
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id)
@@ -70,40 +53,35 @@ namespace WebShop.Controllers
         [HttpPut]
         public IActionResult UpdateProduct([FromBody] Product product)
         {
-            if (product == null)
-                return BadRequest("Product is null.");
 
-            try
+            var existingProduct = _unitOfWork.Products.GetById(product.Id);
+            if (existingProduct == null)
             {
-                _unitOfWork.Products.Update(product);
-                _unitOfWork.Complete();
+                return NotFound(new { Message = $"Product with ID {product.Id} not found." });
+            }
 
-                return Ok("Product updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            _unitOfWork.Products.Update(product);
+            _unitOfWork.Complete();
+
+            return Ok("Product updated successfully.");
+            
         }
         [HttpDelete]
         public IActionResult DeleteProduct(int id)
         {
-            try
+            
+            var product = _unitOfWork.Products.GetById(id);
+
+            if (product == null)
             {
-                var product = _unitOfWork.Products.GetById(id);
-
-                if (product == null)
-                    return NotFound();
-
-                _unitOfWork.Products.Delete(product);
-                _unitOfWork.Complete();
-
-                return Ok("Product deleted successfully.");
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+
+            _unitOfWork.Products.Delete(product);
+            _unitOfWork.Complete();
+
+            return Ok("Product deleted successfully.");
+        
         }
     }
 }
