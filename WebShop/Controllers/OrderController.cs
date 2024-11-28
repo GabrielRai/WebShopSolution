@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Repository;
 using Repository.Models;
 using WebShop.UnitOfWork;
 
@@ -19,89 +18,70 @@ namespace WebShop.Controllers
         [HttpPost]
         public IActionResult AddOrder([FromBody] Order order)
         {
-            if (order == null)
-                return BadRequest("Order is null.");
-
-            try
+            if (!ModelState.IsValid)
             {
-                _unitOfWork.Orders.Add(order);
-
-                // Save changes
-                _unitOfWork.Complete();
-
-                return Ok("Order added successfully.");
+                return BadRequest(ModelState);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            _unitOfWork.Orders.Add(order);
+            _unitOfWork.Complete();
+
+            return Ok("Order added successfully.");
         }
 
         [HttpGet]
         public IActionResult GetOrders()
         {
-            try
-            {
-                var orders = _unitOfWork.Orders.GetAll();
+            var orders = _unitOfWork.Orders.GetAll();
 
-                return Ok(orders);
-            }
-            catch (Exception ex)
+            if (!orders.Any())
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Orders not found" });
             }
+
+            return Ok(orders);
         }
         [HttpGet("{id}")]
         public IActionResult GetOrderById(int id)
         {
-            try
-            {
-                var orders = _unitOfWork.Orders.GetById(id);
 
-                return Ok(orders);
-            }
-            catch (Exception ex)
+            var orders = _unitOfWork.Orders.GetById(id);
+
+            if (orders == null)
             {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
+                return NotFound(new { Message = "Order not found" });
             }
+
+            return Ok(orders);
+
         }
         [HttpPut]
         public IActionResult UpdateOrder([FromBody] Order order)
         {
-            if (order == null)
-                return BadRequest("Order is null.");
-
-            try
+            if (!ModelState.IsValid)
             {
-                _unitOfWork.Orders.Update(order);
-                _unitOfWork.Complete();
+                return BadRequest(ModelState);
+            }
+            _unitOfWork.Orders.Update(order);
+            _unitOfWork.Complete();
 
-                return Ok("Order updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return Ok("Order updated successfully.");
         }
         [HttpDelete]
         public IActionResult DeleteOrder(int id)
         {
-            try
+
+            var order = _unitOfWork.Orders.GetById(id);
+
+            if (order == null)
             {
-                var order = _unitOfWork.Orders.GetById(id);
-
-                if (order == null)
-                    return NotFound();
-
-                _unitOfWork.Orders.Delete(order);
-                _unitOfWork.Complete();
-
-                return Ok("Order deleted successfully.");
+                return NotFound(new { Message = $"Order with ID {id} not found." });
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+
+            _unitOfWork.Orders.Delete(order);
+            _unitOfWork.Complete();
+
+            return Ok("Order deleted successfully.");
+
         }
     }
 }
