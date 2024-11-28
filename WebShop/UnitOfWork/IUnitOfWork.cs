@@ -1,5 +1,4 @@
-﻿using Repository.Repositories;
-using Repository.Repositories.Categories;
+﻿using Repository.Repositories.Categories;
 using Repository.Repositories.Customers;
 using Repository.Repositories.OrderItems;
 using Repository.Repositories.Orders;
@@ -17,7 +16,7 @@ namespace WebShop.UnitOfWork
         ICategoryRepository Categories { get; }
         ICustomerRepository Customers { get; }
 
-        int Complete();
+        Task<int> Complete();
     }
 }
 
