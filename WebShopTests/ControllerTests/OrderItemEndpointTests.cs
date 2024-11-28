@@ -41,5 +41,19 @@ namespace WebShopTests.ControllerTests
             var returnValue = Assert.IsType<List<OrderItem>>(requestResult.Value);
             Assert.Equal(orderItems, returnValue);
         }
+        [Fact]
+        public void GetAllOrderItems_ReturnsNotFound()
+        {
+            // Arrange
+            var fakeUoW = A.Fake<IUnitOfWork>();
+
+            // Act
+            var controller = new OrderItemController(fakeUoW);
+            var result = controller.GetOrderItems();
+
+            // Assert
+            var requestResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal(404, requestResult.StatusCode);
+        }
     }
 }

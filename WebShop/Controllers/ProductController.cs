@@ -38,13 +38,13 @@ namespace WebShop.Controllers
                 return NotFound(new { Message = "Products not found" });
             }
             return Ok(products);
-            
+
         }
 
         [HttpGet("{id}")]
         public IActionResult GetProductById(int id)
         {
-            
+
             var product = _unitOfWork.Products.GetById(id);
 
             if (product == null)
@@ -60,6 +60,7 @@ namespace WebShop.Controllers
         {
 
             var existingProduct = _unitOfWork.Products.GetById(product.Id);
+
             if (existingProduct == null)
             {
                 return NotFound(new { Message = $"Product with ID {product.Id} not found." });
@@ -69,12 +70,12 @@ namespace WebShop.Controllers
             _unitOfWork.Complete();
 
             return Ok("Product updated successfully.");
-            
+
         }
         [HttpDelete]
         public IActionResult DeleteProduct(int id)
         {
-            
+
             var product = _unitOfWork.Products.GetById(id);
 
             if (product == null)
@@ -86,7 +87,7 @@ namespace WebShop.Controllers
             _unitOfWork.Complete();
 
             return Ok("Product deleted successfully.");
-        
+
         }
     }
 }
