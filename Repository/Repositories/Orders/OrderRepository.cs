@@ -1,19 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Repository.Data;
 using Repository.Models;
 
 namespace Repository.Repositories.Orders
 {
-    public class OrderRepository(MyDbContext context, DbSet<Order> dbSet) : Repository<Order>(context, dbSet), IOrderRepository
+    public class OrderRepository : Repository<Order>, IOrderRepository
     {
-        public bool ChangeOrderStatus(Order order)
+        private readonly MyDbContext _context;
+        private readonly DbSet<Order> _dbSet;
+        public OrderRepository(MyDbContext context, DbSet<Order> dbSet) : base(context, dbSet)
         {
-            throw new NotImplementedException();
+            _context = context;
+            _dbSet = context.Set<Order>();
+        }
+        public bool createOrder(Order order)
+        {
+            if (order == null)
+            {
+                throw new ArgumentNullException(nameof(order));
+            }
+
+            _context.Add(order);
+
+            return true;
         }
     }
 }
