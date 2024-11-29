@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
+﻿using Moq;
 using Repository.Models;
 using Repository.Repositories.Orders;
 
@@ -62,7 +57,8 @@ namespace WebShopTests.UnitTests
             // Arrange
             var order = new Order
             {
-                Id = 1, OrderDate = DateTime.Now,
+                Id = 1,
+                OrderDate = DateTime.Now,
                 Customer = new Customer { Id = 1, Name = "John" }
             };
             _mockOrderRepository.Setup(x => x.GetById(order.Id)).Returns(order);
@@ -76,12 +72,14 @@ namespace WebShopTests.UnitTests
         }
 
         [Fact]
-        public void GetOrderById_ReturnsNull() {
-            
+        public void GetOrderById_ReturnsNull()
+        {
+
             // Arrange
             var order = new Order
             {
-                Id = 1, OrderDate = DateTime.Now,
+                Id = 1,
+                OrderDate = DateTime.Now,
                 Customer = new Customer { Id = 1, Name = "John" }
             };
             _mockOrderRepository.Setup(x => x.GetById(order.Id)).Returns(() => null);
@@ -99,7 +97,8 @@ namespace WebShopTests.UnitTests
             // Arrange
             var order = new Order
             {
-                Id = 1, OrderDate = DateTime.Now,
+                Id = 1,
+                OrderDate = DateTime.Now,
                 Customer = new Customer { Id = 1, Name = "John" }
             };
             _mockOrderRepository.Setup(x => x.Update(order));
@@ -112,7 +111,7 @@ namespace WebShopTests.UnitTests
         }
 
         [Fact]
-        public void UpdateOrder_ReturnsNoResult() 
+        public void UpdateOrder_ReturnsNoResult()
         {
             // Arrange
             Order order = null;
@@ -127,7 +126,8 @@ namespace WebShopTests.UnitTests
             // Arrange
             var order = new Order
             {
-                Id = 1, OrderDate = DateTime.Now,
+                Id = 1,
+                OrderDate = DateTime.Now,
                 Customer = new Customer { Id = 1, Name = "John" }
             };
             _mockOrderRepository.Setup(repo => repo.Delete(order));
@@ -139,6 +139,7 @@ namespace WebShopTests.UnitTests
             // Assert
             Assert.Null(result);
         }
+
         [Fact]
         public void DeleteOrder_ReturnsNoResult()
         {
@@ -148,5 +149,54 @@ namespace WebShopTests.UnitTests
             // Act & Assert
             Assert.ThrowsAsync<ArgumentNullException>(() => _mockOrderRepository.Object.Delete(order));
         }
+
+        [Fact]
+        public void CreateOrder_ReturnsOkResult()
+        {
+            // Arrange
+            var order = new Order
+            {
+                Id = 1,
+                OrderDate = DateTime.Now,
+                Customer = new Customer { Id = 1, Name = "John" },
+                OrderItems = new List<OrderItem>
+                {
+                    new OrderItem { Id = 1, OrderId = 1, ProductId = 1, Quantity = 1 },
+                    new OrderItem { Id = 2, OrderId = 1, ProductId = 2, Quantity = 2 }
+                }
+            };
+            _mockOrderRepository.Setup(repo => repo.CreateOrder(order)).Returns(true);
+
+            // Act
+            var result = _mockOrderRepository.Object.CreateOrder(order);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void CreateOrder_ReturnsNoResult()
+        {
+            // Arrange
+            var order = new Order
+            {
+                Id = 1,
+                OrderDate = DateTime.Now,
+                Customer = new Customer { Id = 1, Name = "John" },
+                OrderItems = new List<OrderItem>
+                {
+                    new OrderItem { Id = 1, OrderId = 1, ProductId = 1, Quantity = 1 },
+                    new OrderItem { Id = 2, OrderId = 1, ProductId = 2, Quantity = 2 }
+                }
+            };
+            _mockOrderRepository.Setup(repo => repo.CreateOrder(order)).Returns(false);
+
+            // Act
+            var result = _mockOrderRepository.Object.CreateOrder(order);
+
+            // Assert
+            Assert.False(result);
+        }
+
     }
 }
