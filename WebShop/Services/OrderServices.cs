@@ -27,7 +27,7 @@ namespace Repository.Services
 
             if (customer == null)
             {
-                return false; // Returnera false istället för att kasta exception
+                return false;
             }
 
             var order = new Order
@@ -44,7 +44,7 @@ namespace Repository.Services
                 var product = _unitOfWork.Products.GetById(productRequest.ProductId);
                 if (product == null || product.Stock < productRequest.Quantity)
                 {
-                    return false; // Felaktig produkt eller otillräckligt lager
+                    return false;
                 }
 
                 var orderItem = new OrderItem

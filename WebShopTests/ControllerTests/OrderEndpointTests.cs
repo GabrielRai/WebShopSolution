@@ -237,7 +237,7 @@ namespace WebShopTests.ControllerTests
         }
 
         [Fact]
-        public async Task CreateOrder_ReturnsOk()
+        public void CreateOrder_ReturnsOk()
         {
             // Arrange
             var fakeUoW = A.Fake<IUnitOfWork>();
@@ -278,6 +278,49 @@ namespace WebShopTests.ControllerTests
 
             A.CallTo(() => fakeUoW.Orders.CreateOrder(A<Order>._)).MustHaveHappened();
             A.CallTo(() => fakeUoW.Complete()).MustHaveHappened();
+        }
+        [Fact]
+        public void CreateOrder_ReturnsBadRequest()
+        {
+            // Arrange
+            var fakeUoW = A.Fake<IUnitOfWork>();
+            var fakeCustomerRepo = A.Fake<ICustomerRepository>();
+            var fakeProductRepo = A.Fake<IProductRepository>();
+            var fakeOrderRepo = A.Fake<IOrderRepository>();
+
+            A.CallTo(() => fakeUoW.Customers).Returns(fakeCustomerRepo);
+            A.CallTo(() => fakeUoW.Products).Returns(fakeProductRepo);
+            A.CallTo(() => fakeUoW.Orders).Returns(fakeOrderRepo);
+
+            A.CallTo(() => fakeCustomerRepo.GetById(1))
+                .Returns(new Customer { Id = 1, Name = "Test Customer" });
+
+            A.CallTo(() => fakeProductRepo.GetById(1))
+                .Returns(new Product { Id = 1, Stock = 10, Name = "Test Product" });
+
+            A.CallTo(() => fakeOrderRepo.CreateOrder(A<Order>._)).Returns(false);
+
+            var order = new CreateOrderRequest
+            {
+                CustomerId = 1,
+                OrderDate = DateTime.Now,
+                Products = new List<ProductRequest>
+                {
+                    new ProductRequest { ProductId = 1, Quantity = 1 }
+                }
+            };
+
+            var controller = new OrderController(fakeUoW);
+
+            // Act
+            var result = controller.CreateOrder(order);
+
+            // Assert
+            var requestResult = Assert.IsType<BadRequestObjectResult>(result);
+            Assert.Equal(400, requestResult.StatusCode);
+
+            A.CallTo(() => fakeUoW.Orders.CreateOrder(A<Order>._)).MustHaveHappened();
+            A.CallTo(() => fakeUoW.Complete()).MustNotHaveHappened();
         }
     }
 }
