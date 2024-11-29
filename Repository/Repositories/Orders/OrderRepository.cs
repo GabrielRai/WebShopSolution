@@ -13,7 +13,7 @@ namespace Repository.Repositories.Orders
             _context = context;
             _dbSet = context.Set<Order>();
         }
-        public bool createOrder(Order order)
+        public bool CreateOrder(Order order)
         {
             if (order == null)
             {

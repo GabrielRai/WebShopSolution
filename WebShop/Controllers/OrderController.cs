@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Repository.Classes;
 using Repository.Models;
+using Repository.Services;
 using WebShop.UnitOfWork;
 
 namespace WebShop.Controllers
@@ -9,10 +11,12 @@ namespace WebShop.Controllers
     public class OrderController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly OrderServices _orderService;
 
         public OrderController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
+            _orderService = new OrderServices(unitOfWork);
         }
 
         [HttpPost]
@@ -26,6 +30,29 @@ namespace WebShop.Controllers
             _unitOfWork.Complete();
 
             return Ok("Order added successfully.");
+        }
+
+        [HttpPost("create")]
+        public IActionResult CreateOrder([FromBody] CreateOrderRequest order)
+        {
+            if (order == null)
+            {
+                return BadRequest(new { Message = "Request is null." });
+            }
+
+            try
+            {
+                var result = _orderService.CreateOrderAsync(order);
+                if (result.Result)
+                {
+                    return Ok(new { Message = "Order created successfully." });
+                }
+                return BadRequest(new { Message = "Failed to create order. Check stock or customer validity." });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         [HttpGet]

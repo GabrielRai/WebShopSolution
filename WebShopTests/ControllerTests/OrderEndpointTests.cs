@@ -1,6 +1,11 @@
 ﻿using FakeItEasy;
 using Microsoft.AspNetCore.Mvc;
+using Repository;
+using Repository.Classes;
 using Repository.Models;
+using Repository.Repositories.Customers;
+using Repository.Repositories.Orders;
+using Repository.Repositories.Products;
 using WebShop.Controllers;
 using WebShop.UnitOfWork;
 
@@ -229,6 +234,50 @@ namespace WebShopTests.ControllerTests
             var requestResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal(404, requestResult.StatusCode);
             A.CallTo(() => fakeUoW.Orders.Delete(A<Order>._)).MustNotHaveHappened();
+        }
+
+        [Fact]
+        public async Task CreateOrder_ReturnsOk()
+        {
+            // Arrange
+            var fakeUoW = A.Fake<IUnitOfWork>();
+            var fakeCustomerRepo = A.Fake<ICustomerRepository>();
+            var fakeProductRepo = A.Fake<IProductRepository>();
+            var fakeOrderRepo = A.Fake<IOrderRepository>();
+
+            A.CallTo(() => fakeUoW.Customers).Returns(fakeCustomerRepo);
+            A.CallTo(() => fakeUoW.Products).Returns(fakeProductRepo);
+            A.CallTo(() => fakeUoW.Orders).Returns(fakeOrderRepo);
+
+            A.CallTo(() => fakeCustomerRepo.GetById(1))
+                .Returns(new Customer { Id = 1, Name = "Test Customer" });
+
+            A.CallTo(() => fakeProductRepo.GetById(1))
+                .Returns(new Product { Id = 1, Stock = 10, Name = "Test Product" });
+
+            A.CallTo(() => fakeOrderRepo.CreateOrder(A<Order>._)).Returns(true);
+
+            var order = new CreateOrderRequest
+            {
+                CustomerId = 1,
+                OrderDate = DateTime.Now,
+                Products = new List<ProductRequest>
+                {
+                    new ProductRequest { ProductId = 1, Quantity = 1 }
+                }
+            };
+
+            var controller = new OrderController(fakeUoW);
+
+            // Act
+            var result = controller.CreateOrder(order);
+
+            // Assert
+            var requestResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal(200, requestResult.StatusCode);
+
+            A.CallTo(() => fakeUoW.Orders.CreateOrder(A<Order>._)).MustHaveHappened();
+            A.CallTo(() => fakeUoW.Complete()).MustHaveHappened();
         }
     }
 }
