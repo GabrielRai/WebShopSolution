@@ -8,9 +8,14 @@ COPY WebShopTests/WebShopTests.csproj WebShopTests/
 COPY WebShop/WebShop.csproj WebShop/
 
 # Restore as distinct layers
-RUN dotnet restore
+RUN dotnet restore WebShopSolution.sln
+
+COPY . ./
+
+RUN dotnet test WebShopTests/WebShopTests.csproj --no-build --verbosity normal
+
 # Build and publish a release
-RUN dotnet publish -c Release -o out
+RUN dotnet publish WebShop/WebShop.csproj -c Release -o out
 
 # Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0@sha256:6c4df091e4e531bb93bdbfe7e7f0998e7ced344f54426b7e874116a3dc3233ff
