@@ -17,7 +17,7 @@ namespace Repository.Repositories.Orders
         {
             if (order == null)
             {
-                throw new ArgumentNullException(nameof(order));
+                return false;
             }
 
             _context.Add(order);
