@@ -7,6 +7,7 @@ namespace WebShop.Notifications
     {
         // Lista över registrerade observatörer
         private readonly List<INotificationObserver> _observers = new List<INotificationObserver>();
+        public string State { get; set; }
 
         public void Attach(INotificationObserver observer)
         {
@@ -27,6 +28,18 @@ namespace WebShop.Notifications
             {
                 observer.Update(product);
             }
+        }
+
+        public void NotifyProductAdded(Product product)
+        {
+            State = ("Product added: " + product.Name);
+            Notify(product);
+
+        }
+
+        public List<INotificationObserver> GetObservers()
+        {
+            return _observers;
         }
     }
 }
