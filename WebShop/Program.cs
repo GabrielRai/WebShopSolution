@@ -30,7 +30,10 @@ app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.MapGet("/", async context =>
+{
+    context.Response.Redirect("/swagger");
+});
 app.MapControllers();
 
 app.Run();
